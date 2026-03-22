@@ -24,6 +24,7 @@
   const screens = [];
   let currentIndex = -1;
   let dragState = null;
+  let draggedScreenIndex = null;
 
   function setStatus(message) { statusNode.textContent = message; }
   function slugify(value) {
@@ -46,10 +47,42 @@
       const button = document.createElement("button");
       button.type = "button";
       button.className = "builder-screen" + (index === currentIndex ? " active" : "");
+      button.draggable = true;
+      button.dataset.index = String(index);
       button.addEventListener("click", () => {
         currentIndex = index;
         renderList();
         renderPreview();
+      });
+      button.addEventListener("dragstart", () => {
+        draggedScreenIndex = index;
+      });
+      button.addEventListener("dragover", (event) => {
+        event.preventDefault();
+      });
+      button.addEventListener("drop", (event) => {
+        event.preventDefault();
+        if (draggedScreenIndex === null || draggedScreenIndex === index) {
+          return;
+        }
+
+        const moved = screens.splice(draggedScreenIndex, 1)[0];
+        screens.splice(index, 0, moved);
+
+        if (currentIndex === draggedScreenIndex) {
+          currentIndex = index;
+        } else if (draggedScreenIndex < currentIndex && index >= currentIndex) {
+          currentIndex -= 1;
+        } else if (draggedScreenIndex > currentIndex && index <= currentIndex) {
+          currentIndex += 1;
+        }
+
+        draggedScreenIndex = null;
+        renderList();
+        renderPreview();
+      });
+      button.addEventListener("dragend", () => {
+        draggedScreenIndex = null;
       });
 
       const image = document.createElement("img");
@@ -169,14 +202,21 @@
     setStatus("Uploading screens...");
     const files = Array.from(fileInput.files || []);
     for (const file of files) {
-      const url = await uploadFile(reviewSlug, file);
-      screens.push({
+      const localUrl = URL.createObjectURL(file);
+      const screen = {
         title: "Step " + (screens.length + 1),
-        url,
+        url: localUrl,
+        uploadedUrl: null,
         hotspot: null
-      });
+      };
+      screens.push(screen);
+      if (currentIndex === -1 && screens.length) currentIndex = 0;
+      renderList();
+      renderPreview();
+
+      const uploadedUrl = await uploadFile(reviewSlug, file);
+      screen.uploadedUrl = uploadedUrl;
     }
-    if (currentIndex === -1 && screens.length) currentIndex = 0;
     renderList();
     renderPreview();
     setStatus("Screens uploaded. Double-click the preview to create a click area, then drag it.");
@@ -207,7 +247,7 @@
       title: "Intro",
       subtitle: "Page 1 of " + totalPages,
       type: "intro",
-      image: screens[0].url,
+      image: screens[0].uploadedUrl || screens[0].url,
       hotspot: null
     }];
 
@@ -215,7 +255,7 @@
       reviewScreens.push({
         title: screen.title,
         subtitle: "Page " + (index + 2) + " of " + totalPages,
-        image: screen.url,
+        image: screen.uploadedUrl || screen.url,
         hotspot: screen.hotspot
       });
     });
@@ -224,7 +264,7 @@
       title: "Submit",
       subtitle: "Page " + totalPages + " of " + totalPages,
       type: "submit",
-      image: screens[screens.length - 1].url,
+      image: screens[screens.length - 1].uploadedUrl || screens[screens.length - 1].url,
       hotspot: null
     });
 
