@@ -8,7 +8,6 @@
   const supabase = window.supabase.createClient(storage.supabaseUrl, storage.supabaseAnonKey);
   const statusNode = document.getElementById("builderStatus");
   const titleInput = document.getElementById("reviewTitle");
-  const slugInput = document.getElementById("reviewSlugInput");
   const fileInput = document.getElementById("reviewImages");
   const screenList = document.getElementById("builderScreenList");
   const previewImage = document.getElementById("builderPreviewImage");
@@ -17,7 +16,6 @@
   const hotspotHandle = document.getElementById("builderHotspotHandle");
   const pageLabel = document.getElementById("builderPageLabel");
   const productCommentInput = document.getElementById("builderProductComment");
-  const clearHotspotButton = document.getElementById("clearHotspotButton");
   const saveReviewButton = document.getElementById("saveReviewButton");
   const shareBox = document.getElementById("shareBox");
   const shareLink = document.getElementById("shareLink");
@@ -35,12 +33,7 @@
   function clamp(value, min, max) { return Math.max(min, Math.min(value, max)); }
 
   titleInput.addEventListener("input", () => {
-    if (!slugInput.dataset.edited) slugInput.value = slugify(titleInput.value);
-  });
-
-  slugInput.addEventListener("input", () => {
-    slugInput.dataset.edited = "true";
-    slugInput.value = slugify(slugInput.value);
+    renderList();
   });
 
   function renderList() {
@@ -198,12 +191,11 @@
   }
 
   fileInput.addEventListener("change", async () => {
-    const reviewSlug = slugify(slugInput.value || titleInput.value);
+    const reviewSlug = slugify(titleInput.value);
     if (!reviewSlug) {
       setStatus("Enter a review title before uploading screens.");
       return;
     }
-    slugInput.value = reviewSlug;
     setStatus("Uploading screens...");
     const files = Array.from(fileInput.files || []);
     for (const file of files) {
@@ -223,17 +215,17 @@
       const uploadedUrl = await uploadFile(reviewSlug, file);
       screen.uploadedUrl = uploadedUrl;
     }
+    const lastIndex = screens.length - 1;
+    screens.forEach((screen, index) => {
+      if (index === lastIndex) {
+        screen.hotspot = null;
+      } else if (!screen.hotspot) {
+        screen.hotspot = { ...defaultHotspot };
+      }
+    });
     renderList();
     renderPreview();
     setStatus("Screens uploaded. Double-click the preview to create a click area, then drag it.");
-  });
-
-  clearHotspotButton.addEventListener("click", () => {
-    const screen = screens[currentIndex];
-    if (!screen) return;
-    screen.hotspot = null;
-    updateHotspot();
-    renderList();
   });
 
   productCommentInput.addEventListener("input", () => {
@@ -244,9 +236,9 @@
 
   async function saveReview() {
     const title = titleInput.value.trim();
-    const reviewSlug = slugify(slugInput.value || titleInput.value);
+    const reviewSlug = slugify(titleInput.value);
     if (!title || !reviewSlug) {
-      setStatus("Add a review title and slug first.");
+      setStatus("Add a review title first.");
       return;
     }
     if (!screens.length) {
