@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Review</title>
+  <link rel="stylesheet" href="./styles.css">
+  <style>
+    .builder-layout { display:grid; grid-template-columns:360px 1fr; gap:18px; min-height:100vh; padding:18px; }
+    .builder-panel, .builder-stage { display:flex; flex-direction:column; gap:16px; padding:16px; min-width:0; }
+    .builder-field { display:flex; flex-direction:column; gap:8px; }
+    .builder-field label { font-size:13px; font-weight:700; }
+    .builder-field input { width:100%; border:1px solid var(--line); border-radius:14px; padding:12px 14px; font:inherit; background:rgba(255,255,255,0.85); }
+    .builder-screen-list { display:flex; flex-direction:column; gap:10px; min-height:0; overflow:auto; }
+    .builder-screen { display:grid; grid-template-columns:72px 1fr; gap:10px; padding:10px; border:1px solid var(--line); border-radius:14px; background:rgba(255,255,255,0.65); cursor:pointer; }
+    .builder-screen.active { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+    .builder-screen img { width:72px; aspect-ratio:16/10; object-fit:cover; border-radius:10px; background:#fff; }
+    .builder-screen-title { margin:0; font-size:13px; font-weight:700; }
+    .builder-screen-copy { margin:4px 0 0; font-size:12px; color:var(--muted); line-height:1.4; }
+    .builder-toolbar { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+    .builder-preview { position:relative; width:min(100%,1100px); aspect-ratio:1440/900; border-radius:20px; overflow:hidden; background:#fff; border:1px solid rgba(17,24,39,0.08); box-shadow:0 18px 40px rgba(20,24,35,0.16); margin:0 auto; }
+    .builder-preview img { width:100%; height:100%; object-fit:cover; display:block; }
+    .builder-actions { display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+    .share-box { display:flex; flex-direction:column; gap:10px; padding:14px; border-radius:14px; background:rgba(17,24,39,0.04); }
+    .share-box a { color:var(--accent); word-break:break-all; }
+    @media (max-width:1100px) { .builder-layout { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <div class="builder-layout">
+    <aside class="panel builder-panel">
+      <div class="section-head"><h2>Create Review</h2></div>
+      <div class="builder-field">
+        <label for="reviewTitle">Review title</label>
+        <input id="reviewTitle" type="text" placeholder="Chip Rotation">
+      </div>
+      <div class="builder-field">
+        <label for="reviewSlugInput">Review slug</label>
+        <input id="reviewSlugInput" type="text" placeholder="chip-rotation-client-a-v1">
+      </div>
+      <div class="builder-field">
+        <label for="reviewImages">Upload screens</label>
+        <input id="reviewImages" type="file" accept="image/png,image/jpeg,image/webp" multiple>
+      </div>
+      <div class="builder-field">
+        <label>Screens</label>
+        <div class="builder-screen-list" id="builderScreenList"></div>
+      </div>
+      <div class="share-box" id="shareBox" hidden>
+        <strong>Sharable link</strong>
+        <a id="shareLink" href="#" target="_blank" rel="noreferrer"></a>
+      </div>
+      <div class="feedback-status" id="builderStatus">Ready to create a review.</div>
+    </aside>
+
+    <main class="panel builder-stage">
+      <div class="builder-toolbar">
+        <div><p class="prototype-subtitle prototype-page-number" id="builderPageLabel">Select a screen</p></div>
+        <div class="builder-actions">
+          <button class="control secondary" id="clearHotspotButton" type="button">Clear Click Area</button>
+          <button class="control primary" id="saveReviewButton" type="button">Generate Link</button>
+        </div>
+      </div>
+      <div class="builder-preview" id="builderPreview">
+        <img id="builderPreviewImage" alt="Selected review screen">
+        <div class="hotspot editing" id="builderHotspot" hidden></div>
+        <div class="hotspot-handle hotspot-handle-se" id="builderHotspotHandle" hidden></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="./prototype-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./create-review.js"></script>
+</body>
+</html>
