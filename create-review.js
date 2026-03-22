@@ -16,6 +16,7 @@
   const hotspot = document.getElementById("builderHotspot");
   const hotspotHandle = document.getElementById("builderHotspotHandle");
   const pageLabel = document.getElementById("builderPageLabel");
+  const productCommentInput = document.getElementById("builderProductComment");
   const clearHotspotButton = document.getElementById("clearHotspotButton");
   const saveReviewButton = document.getElementById("saveReviewButton");
   const shareBox = document.getElementById("shareBox");
@@ -131,12 +132,14 @@
     if (!screen) {
       previewImage.removeAttribute("src");
       pageLabel.textContent = "Select a screen";
+      productCommentInput.value = "";
       updateHotspot();
       return;
     }
     previewImage.src = screen.url;
     previewImage.alt = screen.title;
     pageLabel.textContent = screen.title;
+    productCommentInput.value = screen.productComment || "";
     updateHotspot();
   }
 
@@ -209,7 +212,8 @@
         title: "Step " + (screens.length + 1),
         url: localUrl,
         uploadedUrl: null,
-        hotspot: { ...defaultHotspot }
+        hotspot: { ...defaultHotspot },
+        productComment: ""
       };
       screens.push(screen);
       if (currentIndex === -1 && screens.length) currentIndex = 0;
@@ -230,6 +234,12 @@
     screen.hotspot = null;
     updateHotspot();
     renderList();
+  });
+
+  productCommentInput.addEventListener("input", () => {
+    const screen = screens[currentIndex];
+    if (!screen) return;
+    screen.productComment = productCommentInput.value;
   });
 
   async function saveReview() {
@@ -258,7 +268,8 @@
         title: screen.title,
         subtitle: "Page " + (index + 2) + " of " + totalPages,
         image: screen.uploadedUrl || screen.url,
-        hotspot: screen.hotspot
+        hotspot: screen.hotspot,
+        productComment: screen.productComment || ""
       });
     });
 
@@ -284,7 +295,7 @@
       return;
     }
 
-    const shareUrl = new URL(window.location.href.replace("create-review.html", "index.html"));
+    const shareUrl = new URL(window.location.origin + "/");
     shareUrl.searchParams.set("review", reviewSlug);
     shareLink.href = shareUrl.toString();
     shareLink.textContent = shareUrl.toString();

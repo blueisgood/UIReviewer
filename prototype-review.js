@@ -76,6 +76,9 @@
   let pageComments = {};
   let pageFeedback = {};
 
+  notesBox.disabled = true;
+  notesBox.readOnly = true;
+
   function getPageKey(index) {
     return "page_" + index;
   }
@@ -83,14 +86,13 @@
   function readCurrentPageValues() {
     const key = getPageKey(currentIndex);
     return {
-      comments: pageComments[key] || "",
+      comments: config.screens[currentIndex].productComment || "",
       feedback: pageFeedback[key] || ""
     };
   }
 
   function writeCurrentPageValues() {
     const key = getPageKey(currentIndex);
-    pageComments[key] = notesBox.value;
     pageFeedback[key] = feedbackComment.value;
   }
 
@@ -112,7 +114,6 @@
     return fallbackText ? { [getPageKey(1)]: fallbackText } : {};
   }
 
-  pageComments = parseStoredPageMap(null, config.initialNotes || "");
   pageFeedback = {};
 
   function loadSavedHotspots() {
@@ -210,7 +211,8 @@
 
   function setLockedState(locked) {
     isSubmitted = locked;
-    notesBox.disabled = locked;
+    notesBox.disabled = true;
+    notesBox.readOnly = true;
     feedbackComment.disabled = locked;
     submitReviewButton.disabled = locked;
     submitReviewButton.textContent = locked ? "Submitted" : "Submit";
@@ -317,41 +319,40 @@
 
   async function loadRemoteState() {
     if (!supabase) {
-      setProductCommentsStatus("Product comments are local only. Add Supabase config to enable autosave.");
+      setProductCommentsStatus("Product comments are read-only and come from the review setup.");
       setFeedbackStatus("User feedback is local only. Add Supabase config to enable autosave.");
       return;
     }
 
-    setProductCommentsStatus("Loading saved product comments...");
+    setProductCommentsStatus("Product comments are read-only and come from the review setup.");
     setFeedbackStatus("Loading saved user feedback...");
 
     const { data, error } = await supabase
       .from("prototype_reviews")
-      .select("product_comments,user_feedback,submitted_at,updated_at")
+      .select("user_feedback,submitted_at,updated_at")
       .eq("review_slug", reviewSlug)
       .maybeSingle();
 
     if (error) {
-      setProductCommentsStatus("Could not load saved product comments.");
+      setProductCommentsStatus("Product comments are read-only and come from the review setup.");
       setFeedbackStatus("Could not load saved user feedback.");
       return;
     }
 
     if (data) {
-      pageComments = parseStoredPageMap(data.product_comments, data.product_comments || "");
       pageFeedback = parseStoredPageMap(data.user_feedback, data.user_feedback || "");
       const savedAt = data.updated_at ? formatTimestamp(data.updated_at) : "previously";
       if (data.submitted_at) {
         const submittedAt = formatTimestamp(data.submitted_at);
         setLockedState(true);
-        setProductCommentsStatus("Product comments were submitted at " + submittedAt + " and can no longer be edited.");
+        setProductCommentsStatus("Product comments are read-only and come from the review setup.");
         setFeedbackStatus("User feedback were submitted at " + submittedAt + " and can no longer be edited.");
       } else {
-        setProductCommentsStatus("Product comments are auto-saved. Last saved at " + savedAt + ".");
+        setProductCommentsStatus("Product comments are read-only and come from the review setup.");
         setFeedbackStatus("User feedback is auto-saved. Last saved at " + savedAt + ".");
       }
     } else {
-      setProductCommentsStatus("Product comments will auto-save once you start typing.");
+      setProductCommentsStatus("Product comments are read-only and come from the review setup.");
       setFeedbackStatus("User feedback will auto-save once you start typing.");
     }
 
@@ -365,14 +366,13 @@
 
     writeCurrentPageValues();
     const savingMessage = submittedAtIso ? "Submitting..." : "Auto-saving...";
-    setProductCommentsStatus("Product comments are " + savingMessage.toLowerCase());
+    setProductCommentsStatus("Product comments are read-only and come from the review setup.");
     setFeedbackStatus("User feedback is " + savingMessage.toLowerCase());
 
     const now = submittedAtIso || new Date().toISOString();
     const payload = {
       review_slug: reviewSlug,
       reviewer_name: reviewerName || null,
-      product_comments: JSON.stringify(pageComments),
       user_feedback: JSON.stringify(pageFeedback),
       share_url: buildShareLink(),
       submitted_at: submittedAtIso || null,
@@ -384,17 +384,17 @@
       .upsert(payload, { onConflict: "review_slug" });
 
     if (error) {
-      setProductCommentsStatus("Product comments could not be saved. Check the connection and try again.");
+      setProductCommentsStatus("Product comments are read-only and come from the review setup.");
       setFeedbackStatus("User feedback could not be saved. Check the connection and try again.");
       return false;
     }
 
     const savedAt = formatTimestamp(now);
     if (submittedAtIso) {
-      setProductCommentsStatus("Product comments were submitted at " + savedAt + " and can no longer be edited.");
+      setProductCommentsStatus("Product comments are read-only and come from the review setup.");
       setFeedbackStatus("User feedback were submitted at " + savedAt + " and can no longer be edited.");
     } else {
-      setProductCommentsStatus("Product comments are auto-saved. Last saved at " + savedAt + ".");
+      setProductCommentsStatus("Product comments are read-only and come from the review setup.");
       setFeedbackStatus("User feedback is auto-saved. Last saved at " + savedAt + ".");
     }
     return true;
