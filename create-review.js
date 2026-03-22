@@ -25,6 +25,7 @@
   let currentIndex = -1;
   let dragState = null;
   let draggedScreenIndex = null;
+  const defaultHotspot = { left: 72, top: 12, width: 10, height: 4 };
 
   function setStatus(message) { statusNode.textContent = message; }
   function slugify(value) {
@@ -44,6 +45,7 @@
   function renderList() {
     screenList.innerHTML = "";
     screens.forEach((screen, index) => {
+      screen.title = "Step " + (index + 1);
       const button = document.createElement("button");
       button.type = "button";
       button.className = "builder-screen" + (index === currentIndex ? " active" : "");
@@ -207,7 +209,7 @@
         title: "Step " + (screens.length + 1),
         url: localUrl,
         uploadedUrl: null,
-        hotspot: null
+        hotspot: { ...defaultHotspot }
       };
       screens.push(screen);
       if (currentIndex === -1 && screens.length) currentIndex = 0;
