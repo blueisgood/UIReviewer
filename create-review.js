@@ -36,6 +36,17 @@
     renderList();
   });
 
+  function normalizeHotspotsByOrder() {
+    const lastIndex = screens.length - 1;
+    screens.forEach((screen, index) => {
+      if (index === lastIndex) {
+        screen.hotspot = null;
+      } else if (!screen.hotspot) {
+        screen.hotspot = { ...defaultHotspot };
+      }
+    });
+  }
+
   function renderList() {
     screenList.innerHTML = "";
     screens.forEach((screen, index) => {
@@ -74,6 +85,7 @@
         }
 
         draggedScreenIndex = null;
+        normalizeHotspotsByOrder();
         renderList();
         renderPreview();
       });

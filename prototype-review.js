@@ -334,8 +334,9 @@
       .maybeSingle();
 
     if (error) {
+      console.error("Failed to load review feedback", error);
       setProductCommentsStatus("Product comments are read-only and come from the review setup.");
-      setFeedbackStatus("Could not load saved user feedback.");
+      setFeedbackStatus("Could not load saved user feedback: " + (error.message || "unknown error"));
       return;
     }
 
@@ -384,8 +385,9 @@
       .upsert(payload, { onConflict: "review_slug" });
 
     if (error) {
+      console.error("Failed to save review feedback", error);
       setProductCommentsStatus("Product comments are read-only and come from the review setup.");
-      setFeedbackStatus("User feedback could not be saved. Check the connection and try again.");
+      setFeedbackStatus("User feedback could not be saved: " + (error.message || "unknown error"));
       return false;
     }
 
