@@ -27,7 +27,6 @@
   const prevButton = document.getElementById("prevButton");
   const nextButton = document.getElementById("nextButton");
   const submitReviewButton = document.getElementById("submitReviewButton");
-  const submitDescription = document.getElementById("submitDescription");
   const submitMeta = document.getElementById("submitMeta");
   const submittedAtText = document.getElementById("submittedAtText");
   const downloadPdfButton = document.getElementById("downloadPdfButton");
@@ -220,17 +219,11 @@
     notesBox.readOnly = true;
     feedbackComment.disabled = locked;
     submitReviewButton.disabled = locked;
-    submitReviewButton.textContent = locked ? "Submitted" : "Submit";
   }
 
   function updateSubmittedUI() {
     const formatted = submittedAtValue ? formatTimestamp(submittedAtValue) : "";
     submitMeta.hidden = !isSubmitted;
-    if (submitDescription) {
-      submitDescription.textContent = isSubmitted
-        ? "This review has been submitted and is now read-only."
-        : "Use this last page to submit the completed review. Once submitted, comments become read-only.";
-    }
     if (submittedAtText) {
       submittedAtText.textContent = isSubmitted && formatted ? "Submitted at " + formatted : "";
     }
@@ -344,7 +337,7 @@
     prevButton.disabled = currentIndex === 0;
     nextButton.hidden = isSubmitPage;
     nextButton.disabled = currentIndex === config.screens.length - 1;
-    submitReviewButton.hidden = !isSubmitPage;
+    submitReviewButton.hidden = !isSubmitPage || isSubmitted;
     submitReviewButton.disabled = isSubmitted;
 
     renderHotspot(isSubmitPage || isIntroPage ? null : screen.hotspot);
