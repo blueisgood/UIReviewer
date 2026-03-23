@@ -203,6 +203,7 @@
 
   function setHotspotStatus(message) {
     hotspotStatus.textContent = message;
+    hotspotStatus.hidden = !message;
   }
 
   function setFeedbackStatus(message) {
