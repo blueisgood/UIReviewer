@@ -342,7 +342,7 @@
 
     renderHotspot(isSubmitPage || isIntroPage ? null : screen.hotspot);
     if (isSubmitPage) {
-      setHotspotStatus(isEditMode ? "Edit mode is on, but the submit page has no click area." : "No click area on the submit page.");
+      setHotspotStatus("");
     } else if (isIntroPage) {
       setHotspotStatus(isEditMode ? "Edit mode is on, but the intro page has no click area. Go to the next page." : "Hotspot edit mode is off.");
     } else if (screen.hotspot) {
