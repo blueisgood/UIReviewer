@@ -367,6 +367,17 @@ button.control:disabled {
   padding: 32px;
 }
 
+.submit-copy {
+  display: grid;
+  gap: 12px;
+}
+
+.submit-copy p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
 .submit-eyebrow {
   margin: 0 0 8px;
   font-size: 12px;

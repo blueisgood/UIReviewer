@@ -27,6 +27,7 @@
   const prevButton = document.getElementById("prevButton");
   const nextButton = document.getElementById("nextButton");
   const submitReviewButton = document.getElementById("submitReviewButton");
+  const submitCopy = document.getElementById("submitCopy");
   const submitMeta = document.getElementById("submitMeta");
   const submittedAtText = document.getElementById("submittedAtText");
   const downloadPdfButton = document.getElementById("downloadPdfButton");
@@ -224,6 +225,9 @@
 
   function updateSubmittedUI() {
     const formatted = submittedAtValue ? formatTimestamp(submittedAtValue) : "";
+    if (submitCopy) {
+      submitCopy.hidden = isSubmitted;
+    }
     submitMeta.hidden = !isSubmitted;
     if (submittedAtText) {
       submittedAtText.textContent = isSubmitted && formatted ? "Submitted at " + formatted : "";
