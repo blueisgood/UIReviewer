@@ -299,6 +299,16 @@
       return;
     }
 
+    const { error: resetError } = await supabase
+      .from("prototype_reviews")
+      .delete()
+      .eq("review_slug", reviewSlug);
+
+    if (resetError) {
+      setStatus("Review saved, but old feedback state could not be reset.");
+      return;
+    }
+
     const shareUrl = new URL(window.location.origin + "/review.html");
     shareUrl.searchParams.set("review", reviewSlug);
     shareLink.href = shareUrl.toString();
