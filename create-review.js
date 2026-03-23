@@ -301,8 +301,14 @@
 
     const { error: resetError } = await supabase
       .from("prototype_reviews")
-      .delete()
-      .eq("review_slug", reviewSlug);
+      .upsert({
+        review_slug: reviewSlug,
+        reviewer_name: null,
+        user_feedback: JSON.stringify({}),
+        share_url: null,
+        submitted_at: null,
+        updated_at: new Date().toISOString()
+      }, { onConflict: "review_slug" });
 
     if (resetError) {
       setStatus("Review saved, but old feedback state could not be reset.");
