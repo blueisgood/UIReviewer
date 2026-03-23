@@ -299,7 +299,7 @@
       return;
     }
 
-    const shareUrl = new URL(window.location.origin + "/");
+    const shareUrl = new URL(window.location.origin + "/review.html");
     shareUrl.searchParams.set("review", reviewSlug);
     shareLink.href = shareUrl.toString();
     shareLink.textContent = shareUrl.toString();

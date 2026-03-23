@@ -379,10 +379,13 @@
   }
 
   function buildShareLink() {
-    const shareUrl = new URL(window.location.href);
+    const shareUrl = new URL(window.location.origin + "/review.html");
     shareUrl.searchParams.set("review", reviewSlug);
     if (reviewerName) {
       shareUrl.searchParams.set("reviewer", reviewerName);
+    }
+    if (isEditMode) {
+      shareUrl.searchParams.set("edit", "1");
     }
     return shareUrl.toString();
   }

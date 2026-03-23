@@ -3,92 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prototype Review Kit</title>
+  <title>UI Reviewer</title>
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <div class="app">
-    <aside class="panel thumb-rail">
-      <div class="thumb-list" id="thumbList"></div>
-    </aside>
-
-    <main class="content">
-      <section class="panel prototype-panel">
-        <div class="prototype-toolbar">
-          <div>
-            <p class="prototype-subtitle prototype-page-number" id="screenSubtitle">Page 1 of 8</p>
-          </div>
-        </div>
-
-        <div class="device">
-          <div class="submit-screen" id="introScreen" hidden>
-            <div class="submit-card">
-              <p class="submit-eyebrow">Prototype Overview</p>
-              <h2 id="introTitle">Chip Rotation</h2>
-              <p id="introDescription">This prototype shows the chip rotation flow for review. Move through the pages, capture comments on the right, and use the final page to submit the review.</p>
-              <ul class="submit-list">
-                <li>Use Previous and Next to move through the prototype.</li>
-                <li>Leave product comments and user feedback during the review.</li>
-                <li>Submit on the last page to lock the final feedback.</li>
-              </ul>
-            </div>
-          </div>
-          <div class="screen-shell" id="screenShell">
-            <img id="screenImage" alt="Prototype screen">
-            <button class="hotspot" id="hotspot" type="button" aria-label="Prototype click target"></button>
-            <div class="hotspot-handle hotspot-handle-se" id="hotspotHandle" hidden></div>
-          </div>
-          <div class="submit-screen" id="submitScreen" hidden>
-            <div class="submit-card">
-              <p class="submit-eyebrow">Final Review</p>
-              <h2>Submit Feedback</h2>
-              <p id="submitDescription">Use this last page to submit the completed review. Once submitted, comments become read-only.</p>
-              <ul class="submit-list">
-                <li>All product comments and user feedback will be saved.</li>
-                <li>The review will be locked after submit.</li>
-                <li>You can still reopen the link to view the submitted content.</li>
-              </ul>
-              <div class="submit-meta" id="submitMeta" hidden>
-                <strong id="submitSuccessTitle">Feedback submitted successfully.</strong>
-                <span id="submittedAtText"></span>
-                <button class="control primary" id="downloadPdfButton" type="button">Download PDF</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="controls prototype-nav">
-          <button class="control secondary" id="prevButton" type="button">Previous</button>
-          <button class="control primary" id="nextButton" type="button">Next</button>
-          <button class="control primary" id="submitReviewButton" type="button" hidden>Submit</button>
-        </div>
-      </section>
-
-      <aside class="sidebar-stack">
-        <section class="panel notes-panel">
-          <div class="section-head">
-            <h2>Product Comments</h2>
-          </div>
-          <textarea class="notes-box" id="notesBox"></textarea>
-          <div class="feedback-status" id="productCommentsStatus">Product comments are local until storage connects.</div>
-        </section>
-
-        <section class="panel feedback-panel">
-          <div class="section-head">
-            <h2>User Feedback</h2>
-          </div>
-          <textarea class="notes-box" id="feedbackComment" placeholder="Capture user feedback here."></textarea>
-
-          <div class="feedback-status" id="feedbackStatus">User feedback is local until storage connects.</div>
-          <div class="feedback-status" id="hotspotStatus">Hotspot edit mode is off.</div>
-        </section>
-      </aside>
-    </main>
-  </div>
-
-  <script src="./prototype-config.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-  <script src="./prototype-review.js"></script>
+  <main class="home-shell">
+    <section class="home-card panel">
+      <p class="home-eyebrow">UI Reviewer</p>
+      <h1>Review entry point</h1>
+      <p class="home-copy">Create a new prototype review or open the review library to revisit sharable client pages.</p>
+      <div class="home-actions">
+        <a class="home-action panel" href="./create-review.html">
+          <strong>Create New Review</strong>
+          <span>Upload screens, set click areas, and generate a client link.</span>
+        </a>
+        <a class="home-action panel" href="./reviews.html">
+          <strong>Review All Review Pages</strong>
+          <span>Open saved reviews, check status, and jump into the client-facing page.</span>
+        </a>
+      </div>
+    </section>
+  </main>
 </body>
 </html>

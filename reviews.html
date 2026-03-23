@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Reviews</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="reviews-shell">
+    <section class="reviews-header panel">
+      <div>
+        <p class="home-eyebrow">UI Reviewer</p>
+        <h1>All Review Pages</h1>
+        <p class="home-copy">Open sharable review pages and check their current submission state.</p>
+      </div>
+      <div class="reviews-header-actions">
+        <a class="control secondary reviews-link-button" href="./index.html">Home</a>
+        <a class="control primary reviews-link-button" href="./create-review.html">Create New Review</a>
+      </div>
+    </section>
+
+    <section class="reviews-grid" id="reviewsGrid"></section>
+    <section class="panel reviews-empty" id="reviewsEmpty" hidden>No reviews found yet.</section>
+    <section class="feedback-status reviews-status" id="reviewsStatus">Loading reviews...</section>
+  </main>
+
+  <script src="./prototype-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./reviews.js"></script>
+</body>
+</html>
