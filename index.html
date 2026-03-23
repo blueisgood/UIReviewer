@@ -42,12 +42,17 @@
             <div class="submit-card">
               <p class="submit-eyebrow">Final Review</p>
               <h2>Submit Feedback</h2>
-              <p>Use this last page to submit the completed review. Once submitted, comments become read-only.</p>
+              <p id="submitDescription">Use this last page to submit the completed review. Once submitted, comments become read-only.</p>
               <ul class="submit-list">
                 <li>All product comments and user feedback will be saved.</li>
                 <li>The review will be locked after submit.</li>
                 <li>You can still reopen the link to view the submitted content.</li>
               </ul>
+              <div class="submit-meta" id="submitMeta" hidden>
+                <strong id="submitSuccessTitle">Feedback submitted successfully.</strong>
+                <span id="submittedAtText"></span>
+                <button class="control primary" id="downloadPdfButton" type="button">Download PDF</button>
+              </div>
             </div>
           </div>
         </div>
@@ -83,6 +88,7 @@
 
   <script src="./prototype-config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script src="./prototype-review.js"></script>
 </body>
 </html>

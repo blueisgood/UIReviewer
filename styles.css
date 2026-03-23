@@ -256,6 +256,25 @@ button.control:disabled {
   line-height: 1.7;
 }
 
+.submit-meta {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 14px;
+  background: rgba(17, 24, 39, 0.04);
+}
+
+.submit-meta strong {
+  font-size: 15px;
+}
+
+.submit-meta span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
 .screen-shell img {
   display: block;
   width: 100%;

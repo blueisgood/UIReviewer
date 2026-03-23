@@ -27,6 +27,10 @@
   const prevButton = document.getElementById("prevButton");
   const nextButton = document.getElementById("nextButton");
   const submitReviewButton = document.getElementById("submitReviewButton");
+  const submitDescription = document.getElementById("submitDescription");
+  const submitMeta = document.getElementById("submitMeta");
+  const submittedAtText = document.getElementById("submittedAtText");
+  const downloadPdfButton = document.getElementById("downloadPdfButton");
   const hotspot = document.getElementById("hotspot");
   const hotspotHandle = document.getElementById("hotspotHandle");
   const notesBox = document.getElementById("notesBox");
@@ -71,6 +75,7 @@
   let saveTimer = null;
   let hasLoadedRemoteState = false;
   let isSubmitted = false;
+  let submittedAtValue = null;
   let isEditMode = url.searchParams.get("edit") === "1";
   let dragState = null;
   let pageComments = {};
@@ -218,6 +223,70 @@
     submitReviewButton.textContent = locked ? "Submitted" : "Submit";
   }
 
+  function updateSubmittedUI() {
+    const formatted = submittedAtValue ? formatTimestamp(submittedAtValue) : "";
+    submitMeta.hidden = !isSubmitted;
+    if (submitDescription) {
+      submitDescription.textContent = isSubmitted
+        ? "This review has been submitted and is now read-only."
+        : "Use this last page to submit the completed review. Once submitted, comments become read-only.";
+    }
+    if (submittedAtText) {
+      submittedAtText.textContent = isSubmitted && formatted ? "Submitted at " + formatted : "";
+    }
+  }
+
+  function downloadReviewPdf() {
+    const jsPDFLib = window.jspdf && window.jspdf.jsPDF;
+    if (!jsPDFLib) {
+      setFeedbackStatus("PDF library could not be loaded.");
+      return;
+    }
+
+    const pdf = new jsPDFLib({ unit: "pt", format: "a4" });
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const margin = 48;
+    let y = margin;
+
+    function ensureSpace(heightNeeded) {
+      if (y + heightNeeded > pageHeight - margin) {
+        pdf.addPage();
+        y = margin;
+      }
+    }
+
+    function writeLine(text, size, weight, gapAfter) {
+      pdf.setFont("helvetica", weight || "normal");
+      pdf.setFontSize(size);
+      const lines = pdf.splitTextToSize(String(text || ""), pageWidth - margin * 2);
+      const height = lines.length * (size + 4);
+      ensureSpace(height + (gapAfter || 0));
+      pdf.text(lines, margin, y);
+      y += height + (gapAfter || 0);
+    }
+
+    writeLine(config.projectLabel || "Review", 20, "bold", 16);
+    if (submittedAtValue) {
+      writeLine("Submitted at " + formatTimestamp(submittedAtValue), 11, "normal", 18);
+    }
+
+    config.screens.forEach((screen, index) => {
+      if (screen.type === "intro" || screen.type === "submit") {
+        return;
+      }
+      const pageKey = getPageKey(index);
+      writeLine(screen.subtitle || ("Page " + (index + 1)), 14, "bold", 8);
+      writeLine("Product Comments", 11, "bold", 4);
+      writeLine(screen.productComment || "-", 11, "normal", 10);
+      writeLine("User Feedback", 11, "bold", 4);
+      writeLine(pageFeedback[pageKey] || "-", 11, "normal", 18);
+    });
+
+    const fileSlug = reviewSlug || "review";
+    pdf.save(fileSlug + ".pdf");
+  }
+
   function formatTimestamp(isoString) {
     const date = new Date(isoString);
     return date.toLocaleString(undefined, {
@@ -264,6 +333,7 @@
     if (introDescription) {
       introDescription.textContent = "This prototype shows the " + (config.projectLabel || "current") + " flow for review. Move through the pages, capture comments on the right, and use the final page to submit the review.";
     }
+    updateSubmittedUI();
 
     screenSubtitle.textContent = screen.subtitle || "";
     notesBox.value = currentValues.comments;
@@ -344,6 +414,7 @@
       pageFeedback = parseStoredPageMap(data.user_feedback, data.user_feedback || "");
       const savedAt = data.updated_at ? formatTimestamp(data.updated_at) : "previously";
       if (data.submitted_at) {
+        submittedAtValue = data.submitted_at;
         const submittedAt = formatTimestamp(data.submitted_at);
         setLockedState(true);
         setProductCommentsStatus("Product comments are read-only and come from the review setup.");
@@ -393,6 +464,7 @@
 
     const savedAt = formatTimestamp(now);
     if (submittedAtIso) {
+      submittedAtValue = submittedAtIso;
       setProductCommentsStatus("Product comments are read-only and come from the review setup.");
       setFeedbackStatus("User feedback were submitted at " + savedAt + " and can no longer be edited.");
     } else {
@@ -499,7 +571,9 @@
       return;
     }
     setLockedState(true);
+    updateSubmittedUI();
   });
+  downloadPdfButton.addEventListener("click", downloadReviewPdf);
 
   loadSavedHotspots();
   render();
