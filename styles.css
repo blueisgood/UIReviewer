@@ -413,6 +413,20 @@ button.control:disabled {
   font-size: 13px;
 }
 
+.download-pdf-link {
+  appearance: none;
+  width: fit-content;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .screen-shell img {
   display: block;
   width: 100%;
